@@ -45,8 +45,14 @@ class Smarty_Internal_Method_RegisterFilter
         $smarty = $obj->_getSmartyObj();
         $this->_checkFilterType($type);
         $name = isset($name) ? $name : $this->_getFilterName($callback);
-        if (!is_callable($callback)) {
-            throw new SmartyException("{$type}filter '{$name}' not callable");
+        if (PHP_MAJOR_VERSION >= 8) {
+            if (!is_callable([$obj, $name])) {
+                throw new SmartyException("{$type}filter '{$name}' not callable");
+            }
+        } else {
+            if (!is_callable($callback)) {
+                throw new SmartyException("{$type}filter '{$name}' not callable");
+            }
         }
         $smarty->registered_filters[ $type ][ $name ] = $callback;
         return $obj;
